@@ -3,9 +3,29 @@
   <head>
     <meta charset="utf-8" />
     <title>Lab Test 1 Chat App</title>
+    <link rel="stylesheet" href="styles.css">
   </head>
-  <body>
-    <div id="root">Hello</div>
+  <body id="root">
+    <h1>Lab Test 1 Chat App</h1>
+    <div id="login">
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Enter your username" required>
+            <input type="password" id="password" placeholder="Enter your password" required>
+            <button type="submit">Login</button>
+        </form>
+        <h4 id="login-error" style="color: red;"></h4>
+    </div>
+    <div id="chat-app" class="hidden">
+        <div id="chat-window">
+            <div id="chat-messages"></div>
+            <form id="chat-form">
+                <input type="text" id="message" placeholder="Enter your message" required>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+        <div id="users"></div>
+    </div>
   </body>
-<script src="index.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="index.js"></script>
 </html>
