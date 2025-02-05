@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const http = require('http');
 const socketio = require('socket.io');
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
@@ -18,7 +19,13 @@ app.use('/api/user', userRoutes);
 app.use('/api/group', groupRoutes);
 app.use('/api/private', privateRoutes);
 
-app.get("/", (req, res) => res.send("COMP 3133 – Lab Test 1 by Anna"));
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, '../public', 'index.html'));
+});
+
+app.get("/:filename", (req, res) => {
+    res.sendFile(path.join(__dirname, '../public', req.params.filename));
+});
 
 io.on('connection', (socket) => {
     console.log('New WebSocket connection');
