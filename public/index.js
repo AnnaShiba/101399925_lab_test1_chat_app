@@ -1,8 +1,11 @@
 const socket = io();
 
-socket.on('message', (message) => {
-    console.log(message);
-    chatMessages.innerHTML += `<p><span style="color:red"></span>${message}</p>`;
+socket.on('message', (event) => {
+    console.log(event);
+    if (!event.from_user) return;
+
+    const color = event.from_user === localStorage.getItem('currentUser') ? 'green' : 'blue';
+    chatMessages.innerHTML += `<p><span style="color:${color}">${event.from_user}</span>: ${event.message}</p>`;
 });
 
 const loginBlock = document.querySelector('#login');
@@ -66,7 +69,7 @@ joinRoomButton.addEventListener('click', (e) => {
     chatWindow.classList.remove('hidden');
 
     localStorage.setItem('currentRoom', room);
-    socket.emit('join', room);
+    socket.emit('joinRoom', { username: localStorage.getItem('currentUser'), room});
 });
 
 const leaveRoomButton = document.querySelector('#leave-room');
@@ -75,7 +78,7 @@ leaveRoomButton.addEventListener('click', (e) => {
     chatWindow.classList.add('hidden');
 
     const room = localStorage.getItem('currentRoom');
-    socket.emit('leave', room);
+    socket.emit('leaveRoom', { username: localStorage.getItem('currentUser'), room});
     localStorage.removeItem('currentRoom');
 });
 
@@ -108,7 +111,6 @@ chatForm.addEventListener('submit', (e) => {
     })
     .then((response) => {
         console.log(`Message sent to ${response.data.room}`);
-        chatMessages.innerHTML += `<p><span style="color:green">${response.data.from_user}</span>: ${response.data.message}</p>`;
     })
     .catch((error) => {
         console.log(error);

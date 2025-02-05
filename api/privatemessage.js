@@ -1,5 +1,6 @@
 const express = require('express');
 const PrivateMessage = require('../models/privatemessage');
+const { io } = require('./socket');
 
 const router = express.Router();
 

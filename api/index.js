@@ -1,12 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const http = require('http');
-const socketio = require('socket.io');
 const path = require('path');
 
-const app = express();
-const server = http.createServer(app);
-const io = socketio(server);
+const { app, server } = require('./socket');
 
 const userRoutes = require('./users');
 const groupRoutes = require('./groupmessage');
@@ -25,11 +21,6 @@ app.get("/", (req, res) => {
 
 app.get("/:filename", (req, res) => {
     res.sendFile(path.join(__dirname, '../public', req.params.filename));
-});
-
-io.on('connection', (socket) => {
-    console.log('New WebSocket connection');
-    socket.emit('message', 'Hello World!');
 });
 
 mongoose.connect(process.env.MONGODB_URI, {})
