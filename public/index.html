@@ -5,7 +5,7 @@
     <title>Lab Test 1 Chat App</title>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body id="root">
+  <body class="flex-container">
     <h1>Lab Test 1 Chat App</h1>
     <div id="login">
         <form id="login-form">
@@ -16,12 +16,24 @@
         <h4 id="login-error" style="color: red;"></h4>
     </div>
     <div id="chat-app" class="hidden">
-        <div id="chat-window">
+        <div id="current-user">
+            <span>Welcome!</span><button id="logout-button">Logout</button>
+        </div>
+        <div id="room-selector" class="flex-container">
+            <label for="room-dropdown">Select a chat room:</label>
+            <select id="room-dropdown">
+                <option value="general" selected>General</option>
+                <option value="random">Random</option>
+            </select>
+            <button id="join-room">Join Room</button>
+        </div>
+        <div id="chat-window" class="flex-container hidden">
             <div id="chat-messages"></div>
             <form id="chat-form">
                 <input type="text" id="message" placeholder="Enter your message" required>
                 <button type="submit">Send</button>
             </form>
+            <button id="leave-room">Leave Room</button>
         </div>
         <div id="users"></div>
     </div>
