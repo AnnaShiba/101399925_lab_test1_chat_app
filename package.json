@@ -1,0 +1,20 @@
+{
+  "name": "101399925_lab_test1_chat_app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Anna Shibanova",
+  "license": "ISC",
+  "description": "101399925_lab_test1_chat_app",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.0",
+    "mongoose": "^8.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.4"
+  }
+}
