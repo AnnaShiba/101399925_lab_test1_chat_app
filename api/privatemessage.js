@@ -1,11 +1,11 @@
 const express = require('express');
-const GroupMessage = require('../models/groupmessage');
+const PrivateMessage = require('../models/privatemessage');
 
 const router = express.Router();
 
-router.get('/:room', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const messages = await GroupMessage.find({ room: req.params.room });
+        const messages = await PrivateMessage.find();
         res.status(200).json({ data: messages });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -14,7 +14,7 @@ router.get('/:room', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const newMessage = new GroupMessage(req.body);
+        const newMessage = new PrivateMessage(req.body);
         await newMessage.save();
         res.status(201).json({ data: newMessage });
     } catch (err) {
@@ -22,9 +22,21 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.put('/:room/:id', async (req, res) => {
+router.get('/:sender/:reciever', async (req, res) => {
     try {
-        const updatedMessage = await GroupMessage.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const message = await PrivateMessage.find( { from_user: req.params.sender, to_user: req.params.reciever } );
+        if (!message)
+            return res.status(404).json({ message: 'Group message not found.' });
+        
+        res.status(200).json({ data: message });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+router.put('/:id', async (req, res) => {
+    try {
+        const updatedMessage = await PrivateMessage.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updatedMessage)
             return res.status(404).json({ message: 'Group message not found.' });
 
@@ -34,9 +46,9 @@ router.put('/:room/:id', async (req, res) => {
     }
 });
 
-router.delete('/:room/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
-        const deletedMessage = await GroupMessage.findByIdAndDelete(req.query.id);
+        const deletedMessage = await PrivateMessage.findByIdAndDelete(req.query.id);
         if (!deletedMessage)
             return res.status(404).json({ message: 'Group message not found.' });
 

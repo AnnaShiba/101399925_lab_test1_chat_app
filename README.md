@@ -7,3 +7,5 @@ Libraries used:
 - Express
 - Mongoose
 - bcrypt
+
+npm start to execute

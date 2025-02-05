@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
-const groupMessageSchema = new mongoose.Schema({
+const privateMessageSchema = new mongoose.Schema({
     from_user: { type: String, required: true, maxlength: 100 },
-    room: { type: String, required: true },
+    to_user: { type: String, required: true, maxlength: 100 },
     message: { type: String, required: true },
     date_sent: { type: Date, default: Date.now},
 });
 
-module.exports = mongoose.model("GroupMessage", groupMessageSchema);
+module.exports = mongoose.model("PrivateMessage", privateMessageSchema);

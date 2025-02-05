@@ -5,15 +5,15 @@ const router = express.Router();
 
 router.post('/signup', async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, firstname, lastname, password } = req.body;
 
-        const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+        const existingUser = await User.findOne({ username });
 
         if (existingUser) {
             return res.status(409).json({ message: "Username or email already exists." });
         }
 
-        const newUser = new User({ username, email, password });
+        const newUser = new User({ username, firstname, lastname, password });
         await newUser.save();
 
         res.status(201).json({ message: "User created successfully.", user_id: newUser._id });
