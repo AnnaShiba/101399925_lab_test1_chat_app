@@ -20,6 +20,14 @@ io.on('connection', (socket) => {
 
         socket.broadcast.to(room).emit('message', { from_user: 'Admin', room: room, message: `${username} has left the chat room!` });
     });
+
+    socket.on('event', (message) => {
+        const rooms = socket.rooms;
+        for (let room of rooms) {
+            if (room !== socket.id)
+                socket.to(room).emit('event', message);
+        }
+    });
 });
 
 module.exports = { app, server, io };

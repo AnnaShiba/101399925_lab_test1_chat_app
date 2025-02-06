@@ -8,12 +8,34 @@ socket.on('message', (event) => {
     chatMessages.innerHTML += `<p><span style="color:${color}">${event.from_user}</span>: ${event.message}</p>`;
 });
 
+socket.on('event', (event) => {
+    console.log(event);
+    if (!event.from_user) return;
+
+    const id = `event-${event.from_user}`;
+
+    const existingMessage = chatMessages.querySelector(`#${id}`);
+    if (!existingMessage) {
+        chatMessages.innerHTML += `<p id=${id}><span style="color:gray">${event.from_user}</span>: ${event.message}</p>`;
+        setTimeout(() => {
+            document.getElementById(id).remove();
+        }, 3000);
+    }
+});
+
 const loginBlock = document.querySelector('#login');
 const chatBlock = document.querySelector('#chat-app');
 const loginError = document.querySelector('#login-error');
 const chatMessages = document.querySelector('#chat-messages');
 const roomSelector = document.querySelector('#room-selector');
 const chatWindow = document.querySelector('#chat-window');
+
+function authenticate(username) {
+    localStorage.setItem('currentUser', username);
+    document.querySelector('#current-user span').innerHTML = `Welcome, ${username}!`;
+    chatBlock.classList.remove('hidden');
+    loginBlock.classList.add('hidden');
+}
 
 const loginForm = document.querySelector('#login-form');
 loginForm.addEventListener('submit', (e) => {
@@ -37,15 +59,44 @@ loginForm.addEventListener('submit', (e) => {
     })
     .then((data) => {
         console.log(`Logged in as ${data.username}`);
-        localStorage.setItem('currentUser', data.username);
-
-        document.querySelector('#current-user span').innerHTML = `Welcome, ${data.username}!`;
-        chatBlock.classList.remove('hidden');
-        loginBlock.classList.add('hidden');
+        authenticate(data.username);
     })
     .catch((error) => {
         console.log(error);
         console.log(loginError);
+        loginError.innerHTML = error.message;
+    });
+});
+
+const signUpForm = document.querySelector('#sign-up-form');
+signUpForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const username = e.target.username.value;
+
+    fetch('/api/user/signup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username,
+            firstname: e.target.firstname.value,
+            lastname: e.target.lastname.value,
+            password: e.target.password.value,
+        }),
+    })
+    .then((response) => {
+        if (!response.ok)
+            throw new Error('Failed to sign up');
+
+        return response.json();
+    })
+    .then((data) => {
+        console.log(`User created with ID: ${data.user_id}`);
+        authenticate(username);
+    })
+    .catch((error) => {
+        console.log(error);
         loginError.innerHTML = error.message;
     });
 });
@@ -86,7 +137,7 @@ leaveRoomButton.addEventListener('click', (e) => {
 const chatForm = document.querySelector('#chat-form');
 chatForm.querySelector('#message').addEventListener('keypress', (e) => {
     console.log("User is typing...");
-    socket.emit('event', "User is typing...");
+    socket.emit('event', { from_user: localStorage.getItem('currentUser'), message: 'User is typing...' });
 });
 
 chatForm.addEventListener('submit', (e) => {
@@ -116,3 +167,8 @@ chatForm.addEventListener('submit', (e) => {
         console.log(error);
     });
 });
+
+const previousLogin = localStorage.getItem('currentUser');
+if (previousLogin) {
+    authenticate(previousLogin);
+}
